@@ -14,14 +14,18 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
 import com.betasolutions.treesaver.R;
 import com.betasolutions.treesaver.utils.Constants;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.games.Games;
 
 import butterknife.BindView;
 
@@ -82,13 +86,13 @@ public class SplashActivity extends BaseActivity {
         switch (requestCode) {
             case Constants.IntentRequestCode.SIGN_IN_REQUEST_CODE:
                 mItemSelected = false;
+                progressBar.setVisibility(View.GONE);
                 if (resultCode == RESULT_OK) {
                     PreferenceManager.getDefaultSharedPreferences(SplashActivity.this).edit().putBoolean(Constants.PreferenceKey.IS_SIGNED_IN, true).apply();
-                    progressBar.setVisibility(View.GONE);
                     startActivity(new Intent(SplashActivity.this, HomeActivity.class));
                     return;
                 }
-                Toast.makeText(SplashActivity.this, getResources().getString(R.string.could_not_sign_in_please_try_again), Toast.LENGTH_SHORT);
+                Toast.makeText(SplashActivity.this, getResources().getString(R.string.could_not_sign_in_please_try_again), Toast.LENGTH_SHORT).show();
                 break;
         }
     }
