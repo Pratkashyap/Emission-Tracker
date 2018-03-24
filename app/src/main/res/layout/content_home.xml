@@ -13,34 +13,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center">
-
-            <ImageView
-                android:id="@+id/tree_to_fill"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:layout_marginTop="20dp"
-                android:background="@drawable/bkgd_level"
-                android:foregroundGravity="center"
-                android:src="@drawable/ic_tree_to_fill" />
-        </LinearLayout>
-
-        <ProgressBar
-            android:id="@+id/progress_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:indeterminate="true"
-            android:theme="@style/ProgressBarTheme"
-            android:visibility="invisible"
-            tools:visibility="visible" />
-
+        android:orientation="vertical"
+        android:paddingTop="20dp">
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -88,5 +62,95 @@
                 android:paddingLeft="2dp"
                 tools:text="100kg" />
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="sans-serif-condensed"
+                android:text="@string/no_of_trees_saved_today"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/no_of_trees_saved"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="sans-serif-condensed"
+                android:paddingLeft="2dp"
+                tools:text="100kg" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <ProgressBar
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="280dp"
+                    android:layout_height="280dp"
+                    android:indeterminate="false"
+                    android:max="100"
+                    android:id="@+id/tree_progress"
+                    android:layout_centerInParent="true"
+                    android:progressDrawable="@drawable/circular_progress_bar"
+                    android:secondaryProgress="100"
+                    android:theme="@style/ProgressBarTheme"/>
+
+                <ImageView
+                    android:id="@+id/tree_to_fill"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/bkgd_level"
+                    android:foregroundGravity="center"
+                    android:src="@drawable/ic_tree_to_fill" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:theme="@style/ProgressBarTheme"
+            android:visibility="gone"
+            tools:visibility="visible" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="sans-serif-condensed"
+                android:text="@string/km_left_to_earn_next_tree"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/km_left_to_earn_your_tree"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="sans-serif-condensed"
+                android:paddingLeft="2dp"
+                tools:text="100km" />
+        </LinearLayout>
+
     </LinearLayout>
 </android.support.v4.widget.SwipeRefreshLayout>

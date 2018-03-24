@@ -48,6 +48,8 @@ public class HomeActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     @BindView(R.id.tree_to_fill)
     ImageView treeToFill;
+    @BindView(R.id.tree_progress)
+    ProgressBar treeProgress;
     @BindView(R.id.km_saved)
     TextView totalKmTodayTextView;
     @BindView(R.id.emission_reduced)
@@ -56,22 +58,20 @@ public class HomeActivity extends BaseActivity
     ProgressBar progressBar;
     @BindView((R.id.swiperefresh))
     SwipeRefreshLayout swipeRefreshLayout;
-    /*@BindView(R.id.account_email)
-    TextView accountEmail;
-    @BindView(R.id.account_name)
-    TextView accountName;
-    @BindView(R.id.account_photo)
-    ImageView accountPhoto;*/
     @BindView(R.id.nav_view)
     NavigationView navigationView;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.drawer_layout)
     DrawerLayout drawer;
+    @BindView(R.id.no_of_trees_saved)
+    TextView noOfTreesSaved;
+    @BindView(R.id.km_left_to_earn_your_tree)
+    TextView distanceLeftoEarnYourTree;
 
 
     private DecimalFormat mDecimalFormatter;
-
+    private int mTreeCount = 0;
     private float mTotalKmToday = 0;
 
     class FetchHistory extends AsyncTask<Void, Void, Void> {
@@ -113,10 +113,19 @@ public class HomeActivity extends BaseActivity
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            progressBar.setVisibility(View.INVISIBLE);
+            progressBar.setVisibility(View.GONE);
+            mTotalKmToday = 1000f;
             totalKmTodayTextView.setText(getResources().getString(R.string.km_saved_km, mDecimalFormatter.format(mTotalKmToday)));
             totalEmissionReduced.setText(getResources().getString(R.string.emission_reduced_kg, mDecimalFormatter.format(mTotalKmToday * Constants.KM_TO_CARBON_FACTOR)));
-            treeToFill.getBackground().setLevel((int) (mTotalKmToday * Constants.KM_TO_CARBON_FACTOR / Constants.GOAL_CARBON_REDUCTION * 10000));
+            double factor = mTotalKmToday * Constants.KM_TO_CARBON_FACTOR;
+            mTreeCount = (int) (mTotalKmToday * Constants.KM_TO_CARBON_FACTOR / Constants.GOAL_CARBON_REDUCTION);
+            if (factor >= Constants.GOAL_CARBON_REDUCTION) {
+                treeProgress.setProgress(((int) Math.floor((((mTotalKmToday * Constants.KM_TO_CARBON_FACTOR / Constants.GOAL_CARBON_REDUCTION  * 100) % Constants.GOAL_CARBON_REDUCTION) ))));
+            } else {
+                treeProgress.setProgress((int) (Math.floor(mTotalKmToday * Constants.KM_TO_CARBON_FACTOR * 100 / Constants.GOAL_CARBON_REDUCTION)));
+            }
+            noOfTreesSaved.setText(String.valueOf(mTreeCount));
+            distanceLeftoEarnYourTree.setText(getResources().getString(R.string.km_saved_km, mDecimalFormatter.format(Math.abs(Constants.DAILY_DISTANCE_GOAL - mTotalKmToday % Constants.DAILY_DISTANCE_GOAL))));
             swipeRefreshLayout.setRefreshing(false);
         }
     }

@@ -17,6 +17,8 @@
     <string name="km_saved_km">%s Km.</string>
     <string name="emission_reduced">Carbon emission reduced: </string>
     <string name="emission_reduced_kg">%s Kg.</string>
+    <string name="no_of_trees_saved_today">Number of trees saved today: </string>
+    <string name="km_left_to_earn_next_tree">Distance left to earn next tree: </string>
 
 
     <string name="action_settings">Settings</string>
