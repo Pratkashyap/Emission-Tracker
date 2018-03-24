@@ -10,6 +10,7 @@
     <string name="communication">Communication</string>
     <string name="share">Share</string>
     <string name="send">Send</string>
+    <string name="could_not_sign_in_please_try_again">Could not sign in, please try again.</string>
 
 
     <string name="action_settings">Settings</string>
