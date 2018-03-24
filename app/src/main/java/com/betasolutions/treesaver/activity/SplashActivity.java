@@ -40,7 +40,7 @@ public class SplashActivity extends BaseActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (/*PreferenceManager.getDefaultSharedPreferences(SplashActivity.this).getBoolean(Constants.PreferenceKey.IS_SIGNED_IN, false)*/false) {
+                if (PreferenceManager.getDefaultSharedPreferences(SplashActivity.this).getBoolean(Constants.PreferenceKey.IS_SIGNED_IN, false)) {
                     startActivity(new Intent(SplashActivity.this, HomeActivity.class));
                 } else {
                     Account[] accounts = AccountManager.get(SplashActivity.this).getAccountsByType(getResources().getString(R.string.com_google));
