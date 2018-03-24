@@ -1,4 +1,4 @@
-package betasolutions.com.treesaver;
+package com.betasolutions.treesaver;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("betasolutions.com.treesaver", appContext.getPackageName());
+        assertEquals("com.betasolutions.treesaver", appContext.getPackageName());
     }
 }

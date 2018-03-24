@@ -1,4 +1,4 @@
-package betasolutions.com.treesaver.activity;
+package com.betasolutions.treesaver.activity;
 
 import android.os.Bundle;
 import android.os.PersistableBundle;

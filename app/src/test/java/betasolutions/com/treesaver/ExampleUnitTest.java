@@ -1,4 +1,4 @@
-package betasolutions.com.treesaver;
+package com.betasolutions.treesaver;
 
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package betasolutions.com.treesaver.utils;
+package com.betasolutions.treesaver.utils;
 
 /**
  * Created by mac on 24/3/18.

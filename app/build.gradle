@@ -11,7 +11,7 @@ android {
     }
     compileSdkVersion 26
     defaultConfig {
-        applicationId "betasolutions.com.treesaver"
+        applicationId "com.betasolutions.treesaver"
         minSdkVersion 15
         targetSdkVersion 21
         versionCode 1
@@ -43,4 +43,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-auth:11.8.0'
     compile 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    compile 'com.google.firebase:firebase-core:11.8.0'
 }
+apply plugin: 'com.google.gms.google-services'
