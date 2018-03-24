@@ -4,8 +4,12 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.PersistableBundle;
+import android.service.autofill.Dataset;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -26,19 +30,73 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
 import com.betasolutions.treesaver.R;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.fitness.Fitness;
+import com.google.android.gms.fitness.data.Bucket;
+import com.google.android.gms.fitness.data.DataPoint;
+import com.google.android.gms.fitness.data.DataSet;
+import com.google.android.gms.fitness.data.DataSource;
+import com.google.android.gms.fitness.data.DataType;
+import com.google.android.gms.fitness.data.Field;
+import com.google.android.gms.fitness.request.DataReadRequest;
+import com.google.android.gms.fitness.result.DataReadResponse;
+import com.google.android.gms.fitness.result.DataReadResult;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.Format;
+import java.util.Calendar;
+import java.util.Formatter;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 public class HomeActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    class FetchHistory extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            Calendar startTime = Calendar.getInstance();
+            startTime.add(Calendar.DAY_OF_MONTH, -2);
+            startTime.set(Calendar.HOUR_OF_DAY, 0);
+            startTime.set(Calendar.MINUTE, 0);
+            startTime.set(Calendar.SECOND, 0);
+            Calendar endTime = Calendar.getInstance();
+            endTime.add(Calendar.DAY_OF_MONTH, -2);
+            endTime.set(Calendar.HOUR_OF_DAY, 23);
+            endTime.set(Calendar.MINUTE, 59);
+            endTime.set(Calendar.SECOND, 59);
+            final GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getBaseContext());
+            Task<DataReadResponse> response = Fitness.getHistoryClient(HomeActivity.this, account)
+                    .readData(new DataReadRequest.Builder()
+                            .read(DataType.TYPE_DISTANCE_DELTA)
+                            .setTimeRange(startTime.getTimeInMillis(), endTime.getTimeInMillis(), TimeUnit.MILLISECONDS).build());
+            try {
+                DataReadResponse readDataResult = Tasks.await(response);
+                double total = 0;
+                for (DataPoint dp : readDataResult.getDataSet(DataType.TYPE_DISTANCE_DELTA).getDataPoints()) {
+                    total += dp.getValue(Field.FIELD_DISTANCE).asFloat();
+                }
+                Log.d("mac", "total = " + new DecimalFormat("##.##").format(total/1000));
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState, R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        Log.d("mac12345"," account  = " + account.getDisplayName());
-
+        new FetchHistory().execute();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);

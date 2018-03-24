@@ -1,23 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.betasolutions.treesaver.activity.SplashActivity">
-
     <ImageView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
+        android:foregroundGravity="center"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:src="@drawable/splash_image" />
-    <ListView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/list_view"
-        android:layout_alignParentBottom="true"
-        android:background="@android:color/darker_gray">
+        android:layout_height="match_parent">
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/progress_bar"
+            android:indeterminate="true"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:theme="@style/ProgressBarTheme"
+            android:visibility="gone"/>
+        <ListView
+            android:id="@+id/list_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@color/colorLightGray" />
+    </RelativeLayout>
 
-    </ListView>
-
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>
