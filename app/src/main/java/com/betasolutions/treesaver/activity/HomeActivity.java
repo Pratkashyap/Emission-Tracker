@@ -82,12 +82,10 @@ public class HomeActivity extends BaseActivity
         @Override
         protected Void doInBackground(Void... voids) {
             Calendar startTime = Calendar.getInstance();
-            startTime.add(Calendar.DAY_OF_MONTH, -2);
             startTime.set(Calendar.HOUR_OF_DAY, 0);
             startTime.set(Calendar.MINUTE, 0);
             startTime.set(Calendar.SECOND, 0);
             Calendar endTime = Calendar.getInstance();
-            endTime.add(Calendar.DAY_OF_MONTH, -2);
             endTime.set(Calendar.HOUR_OF_DAY, 23);
             endTime.set(Calendar.MINUTE, 59);
             endTime.set(Calendar.SECOND, 59);
@@ -114,7 +112,6 @@ public class HomeActivity extends BaseActivity
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             progressBar.setVisibility(View.GONE);
-            mTotalKmToday = 1000f;
             totalKmTodayTextView.setText(getResources().getString(R.string.km_saved_km, mDecimalFormatter.format(mTotalKmToday)));
             totalEmissionReduced.setText(getResources().getString(R.string.emission_reduced_kg, mDecimalFormatter.format(mTotalKmToday * Constants.KM_TO_CARBON_FACTOR)));
             double factor = mTotalKmToday * Constants.KM_TO_CARBON_FACTOR;
