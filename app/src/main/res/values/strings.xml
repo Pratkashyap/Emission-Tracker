@@ -13,6 +13,10 @@
     <string name="could_not_sign_in_please_try_again">Could not sign in, please try again.</string>
     <string name="request_id_token">188556730804-ekgdvt06hq47u25f2si73ceaf7lrtbr3.apps.googleusercontent.com</string>
     <string name="com_google">com.google</string>
+    <string name="km_saved">Kilometer saved: </string>
+    <string name="km_saved_km">%s Km.</string>
+    <string name="emission_reduced">Carbon emission reduced: </string>
+    <string name="emission_reduced_kg">%s Kg.</string>
 
 
     <string name="action_settings">Settings</string>

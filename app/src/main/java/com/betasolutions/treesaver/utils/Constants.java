@@ -9,10 +9,12 @@ public class Constants {
 
     }
     public static class IntentRequestCode {
-        public final static int SIGN_IN_REQUEST_CODE = 1001;
+        public static final int SIGN_IN_REQUEST_CODE = 1001;
     }
 
     public static class PreferenceKey {
         public static String IS_SIGNED_IN = "pref-isSignedIn";
     }
+    public static final Double KM_TO_CARBON_FACTOR = 0.187;
+    public static final Double GOAL_CARBON_REDUCTION = 1.87;
 }

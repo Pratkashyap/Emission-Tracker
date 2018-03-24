@@ -1,63 +1,84 @@
 package com.betasolutions.treesaver.activity;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.annotation.SuppressLint;
-import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.PersistableBundle;
-import android.service.autofill.Dataset;
-import android.support.annotation.NonNull;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
+import com.betasolutions.treesaver.utils.Constants;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
 import com.betasolutions.treesaver.R;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.fitness.Fitness;
-import com.google.android.gms.fitness.data.Bucket;
 import com.google.android.gms.fitness.data.DataPoint;
-import com.google.android.gms.fitness.data.DataSet;
-import com.google.android.gms.fitness.data.DataSource;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.request.DataReadRequest;
 import com.google.android.gms.fitness.result.DataReadResponse;
-import com.google.android.gms.fitness.result.DataReadResult;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 
-import java.text.DateFormat;
+import java.io.IOException;
 import java.text.DecimalFormat;
-import java.text.Format;
 import java.util.Calendar;
-import java.util.Formatter;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class HomeActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    @BindView(R.id.tree_to_fill)
+    ImageView treeToFill;
+    @BindView(R.id.km_saved)
+    TextView totalKmTodayTextView;
+    @BindView(R.id.emission_reduced)
+    TextView totalEmissionReduced;
+    @BindView(R.id.progress_bar)
+    ProgressBar progressBar;
+    @BindView((R.id.swiperefresh))
+    SwipeRefreshLayout swipeRefreshLayout;
+    /*@BindView(R.id.account_email)
+    TextView accountEmail;
+    @BindView(R.id.account_name)
+    TextView accountName;
+    @BindView(R.id.account_photo)
+    ImageView accountPhoto;*/
+    @BindView(R.id.nav_view)
+    NavigationView navigationView;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout drawer;
+
+
+    private DecimalFormat mDecimalFormatter;
+
+    private float mTotalKmToday = 0;
 
     class FetchHistory extends AsyncTask<Void, Void, Void> {
+        GoogleSignInAccount mAccount;
+        FetchHistory(GoogleSignInAccount account) {
+            mAccount = account;
+        }
         @Override
         protected Void doInBackground(Void... voids) {
             Calendar startTime = Calendar.getInstance();
@@ -70,18 +91,17 @@ public class HomeActivity extends BaseActivity
             endTime.set(Calendar.HOUR_OF_DAY, 23);
             endTime.set(Calendar.MINUTE, 59);
             endTime.set(Calendar.SECOND, 59);
-            final GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getBaseContext());
-            Task<DataReadResponse> response = Fitness.getHistoryClient(HomeActivity.this, account)
+            Task<DataReadResponse> response = Fitness.getHistoryClient(HomeActivity.this, mAccount)
                     .readData(new DataReadRequest.Builder()
                             .read(DataType.TYPE_DISTANCE_DELTA)
                             .setTimeRange(startTime.getTimeInMillis(), endTime.getTimeInMillis(), TimeUnit.MILLISECONDS).build());
             try {
                 DataReadResponse readDataResult = Tasks.await(response);
-                double total = 0;
+                mTotalKmToday = 0;
                 for (DataPoint dp : readDataResult.getDataSet(DataType.TYPE_DISTANCE_DELTA).getDataPoints()) {
-                    total += dp.getValue(Field.FIELD_DISTANCE).asFloat();
+                    mTotalKmToday += dp.getValue(Field.FIELD_DISTANCE).asFloat();
                 }
-                Log.d("mac", "total = " + new DecimalFormat("##.##").format(total/1000));
+                mTotalKmToday = mTotalKmToday/1000;
             } catch (ExecutionException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
@@ -89,27 +109,49 @@ public class HomeActivity extends BaseActivity
             }
             return null;
         }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progressBar.setVisibility(View.INVISIBLE);
+            totalKmTodayTextView.setText(getResources().getString(R.string.km_saved_km, mDecimalFormatter.format(mTotalKmToday)));
+            totalEmissionReduced.setText(getResources().getString(R.string.emission_reduced_kg, mDecimalFormatter.format(mTotalKmToday * Constants.KM_TO_CARBON_FACTOR)));
+            treeToFill.getBackground().setLevel((int) (mTotalKmToday * Constants.KM_TO_CARBON_FACTOR / Constants.GOAL_CARBON_REDUCTION * 10000));
+            swipeRefreshLayout.setRefreshing(false);
+        }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState, R.layout.activity_home);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        new FetchHistory().execute();
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        View headerView = navigationView.getHeaderView(0);
+        ImageView accountPhoto = (ImageView)headerView.findViewById(R.id.account_photo);
+        TextView accountName = (TextView)headerView.findViewById(R.id.account_name);
+        TextView accountEmail = (TextView)headerView.findViewById(R.id.account_email);
+        mDecimalFormatter = new DecimalFormat("##.##");
+        progressBar.setVisibility(View.VISIBLE);
+        final GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getBaseContext());
+        new FetchHistory(account).execute();
+        String imgurl = account.getPhotoUrl().toString();
+        Glide.with(this).load(imgurl).into(accountPhoto);
+        accountName.setText(account.getDisplayName());
+        accountEmail.setText(account.getEmail());
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new FetchHistory(account).execute();
+            }
+        });
     }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -156,8 +198,6 @@ public class HomeActivity extends BaseActivity
         } else if (id == R.id.nav_send) {
 
         }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
