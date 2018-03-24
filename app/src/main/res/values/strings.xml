@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Tree saver</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <!--Menu item strings-->
+    <string name="carbon_emission_data">Carbon emission data</string>
+    <string name="tips">Tips</string>
+    <string name="leaderboard">Leaderboard</string>
+    <string name="communication">Communication</string>
+    <string name="share">Share</string>
+    <string name="send">Send</string>
+
+
+    <string name="action_settings">Settings</string>
+</resources>
